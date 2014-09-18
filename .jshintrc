@@ -1,0 +1,16 @@
+{
+  "undef": true,
+  "unused": "vars",
+  "evil": true,
+  "expr": true,
+  "-W008": true,
+  "-W018": true,
+  "-W041": true,
+  "-W065": true,
+  "-W079": true,
+  "mocha": true,
+  "browser": true,
+  "node": true,
+  "esnext": true,
+  "predef": ["Symbol"]
+}

@@ -1,0 +1,10 @@
+{
+  "libs": [
+    "node",
+    "underscore",
+    "async"
+  ],
+  "plugins": {
+    "node": {}
+  }
+}

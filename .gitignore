@@ -1,0 +1,12 @@
+.coverage
+.noseids
+.cache
+.ropeproject
+.idea
+.netrwhist
+htmlcov/
+.DS_Store
+.dir-locals.el
+.clang_complete
+ClangCompleteInclude
+ve/

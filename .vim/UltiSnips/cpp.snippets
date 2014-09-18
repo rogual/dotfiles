@@ -1,0 +1,17 @@
+snippet h
+#pragma once
+
+namespace rga
+{
+    $0
+}
+endsnippet
+
+snippet cc
+#include "`!p res = snip.basename`.h"
+
+namespace rga
+{
+    $0
+}
+endsnippet

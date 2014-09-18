@@ -1,0 +1,14 @@
+[color]
+        ui = true
+[core]
+        excludesfile = ~/.gitignore
+        editor = vim
+[user]
+        email = r@foon.uk
+        name = Robin Allen
+[push]
+        default = simple
+[merge]
+        conflictstyle = diff3
+[include]
+        path = .gitconfig.local

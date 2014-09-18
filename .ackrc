@@ -1,0 +1,3 @@
+--ignore-directory=is:migrations
+--ignore-directory=is:LC_MESSAGES
+--ignore-directory=is:.ropeproject
