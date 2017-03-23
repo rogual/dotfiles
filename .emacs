@@ -32,11 +32,6 @@
 
 ;;; EDITING
 
-(require-package aggressive-indent
-  (global-aggressive-indent-mode 1)
-  (add-to-list 'aggressive-indent-excluded-modes 'html-mode))
-
-
 ;; Abbrevs
 (progn
 
@@ -45,6 +40,8 @@
 
   (add-hook 'org-mode-hook
             (lambda () (abbrev-mode)))
+
+  (kill-all-abbrevs)
 
   (define-global-abbrev "ns" "namespace")
   (define-global-abbrev "rq" "require")
@@ -109,6 +106,13 @@
 ;; Whitespace
 (add-hook 'before-save-hook 'whitespace-cleanup)
 
+
+;;; DOCS
+
+(when (eq system-type 'gnu/linux)
+  (require-package zeal-at-point
+    (global-set-key (kbd "C-c d") 'zeal-at-point)))
+
 
 
 ;;; APPEARANCE
@@ -131,6 +135,7 @@
   (load-theme 'jbeans t))
 
 ;; Show Paren
+(setq show-paren-delay 0)
 (add-hook 'prog-mode-hook
           #'show-paren-mode)
 (set-face-background 'show-paren-match "#9999aa")
@@ -140,8 +145,8 @@
 ;; Fonts
 (set-face-attribute
  'default nil
- :height 120
- :family (if (eq system-type 'darwin) "Menlo" "Monospace"))
+ :height 100
+ :family (if (eq system-type 'darwin) "Menlo" "Iosevka"))
 
 (setq face-font-rescale-alist '(("Kailasa" . 1.5)))
 
@@ -166,7 +171,7 @@
 (require-package yaml-mode)
 
 ;; Lisp
-(setq inferior-lisp-program "ccl64")
+(setq inferior-lisp-program (if (eq system-type 'darwin) "ccl64" "sbcl"))
 (require-package slime
   (setq slime-contribs '(slime-listener-hooks))
   (setq common-lisp-hyperspec-root
@@ -211,20 +216,7 @@
 ;; JSx
 (add-to-list 'auto-mode-alist '("\\.jsx\\'" . js-jsx-mode))
 
-;; Clojure
-(require-package cider)
-
 ;; Python
-;; This isn't the right setup
-;; Proper way:
-;; One jediepcserver in each pyenv
-;; In a project:
-;;   Use jediepcserver from pyenv with right version
-;;   Set path to project venv
-(require-package jedi
-  (setq jedi:tooltip-method nil)
-  (add-hook 'python-mode-hook 'jedi:setup))
-
 (require-package pydoc-info
   (info-lookup-add-help
    :mode 'python-mode
@@ -235,6 +227,9 @@
 
 (require-package pytest
   (setq pytest-cmd-flags "-s"))
+
+(require-package elpy
+  (global-set-key (kbd "C-c .") 'elpy-goto-definition))
 
 
 ;; Markdown
@@ -277,10 +272,6 @@
 
   (load "~/.emacs.d/evil-little-word.el")
   (require 'evil-little-word)
-
-  (use-package jedi
-    :config
-    (define-key evil-normal-state-map (kbd ",d") 'jedi:goto-definition))
 
   (require-package evil-surround
     (global-evil-surround-mode 1))
@@ -384,6 +375,9 @@
 
 ;;; MAPPINGS
 
+;; Menu toggle
+(global-set-key (kbd "<f12>") 'menu-bar-mode)
+
 ;; Use Esc to quit stuff
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -436,9 +430,10 @@
 
 ;; 80 chars
 (progn
-  (require-package adaptive-wrap
-    (visual-line-mode)
-    (adaptive-wrap-prefix-mode))
+  (when nil
+    (require-package adaptive-wrap
+      (visual-line-mode)
+      (adaptive-wrap-prefix-mode)))
 
   (require-package multi-line)
   (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow)))
@@ -453,7 +448,7 @@
 
 (defun light ()
   (interactive)
-  (global-font-lock-mode 0)
+  (global-font-lock-mode)
 
   (set-face-attribute
    'default nil
@@ -461,16 +456,35 @@
    :family "Monaco")
 
   (dolist (face (face-list))
-    (set-face-background face "#eeeeee")
+    (set-face-bold face nil)
+    (set-face-italic face nil)
+    (set-face-underline face nil)
+    (set-face-background face "#e8e8e8")
     (set-face-foreground face "#000000"))
 
   (fringe-mode 16)
 
-  (dolist (face '(region mode-line isearch lazy-highlight))
+  ;; Decorators are not type names
+  (font-lock-add-keywords
+   'python-mode
+   `(
+     ("@[A-Za-z0-9_]+" . font-lock-keyword-face)))
+
+  ;; Show-parens
+  (set-face-bold 'show-paren-match t)
+
+  (dolist (face '(region mode-line isearch lazy-highlight helm-selection))
     (set-face-background face "#000000")
     (set-face-foreground face "#ffffff"))
 
   (set-cursor-color "#000000")
+
+  (setq git-gutter:modified-sign " =")
+  (setq git-gutter:added-sign    " +")
+  (setq git-gutter:deleted-sign  " -")
+
+  (set-face-bold 'font-lock-type-face t)
+  (set-face-bold 'font-lock-function-name-face t)
 
   (set-face-foreground 'git-gutter:added "#000000")
   (set-face-foreground 'git-gutter:modified "#000000")
@@ -489,17 +503,28 @@
   (load-theme 'jbeans t)
 
   ;; Now for overrides.
-  ;; Dim comment delimiters
+  ;; Dim comment delimiters & pagee break lines
   (set-face-foreground 'font-lock-comment-delimiter-face "#555")
+  (set-face-foreground 'page-break-lines "#555")
 
   ;; Show-parens
   (set-face-background 'show-paren-match "#9999aa")
   (set-face-foreground 'show-paren-match "#000000")
 
   ;; Git-gutter
-  (set-face-foreground 'git-gutter:added "#99ad6a")
-  (set-face-foreground 'git-gutter:modified "#fad07a")
-  (set-face-foreground 'git-gutter:deleted "#cf6a4c"))
+  (progn
+    (set-face-foreground 'git-gutter:deleted "#99ad6a")
+    (set-face-foreground 'git-gutter:modified "#fad07a")
+    (set-face-foreground 'git-gutter:added "#cf6a4c"))
+
+  (progn
+    (setq git-gutter:modified-sign " =")
+    (setq git-gutter:added-sign    " +")
+    (setq git-gutter:deleted-sign  " -"))
+
+  ;; Whitespace
+  (set-face-foreground 'whitespace-line "#cf6a4c")
+  (set-face-background 'whitespace-trailing "#cf6a4c"))
 
 
 
