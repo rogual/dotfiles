@@ -45,6 +45,10 @@ cov() {
     coverage html --include="apps/$1/*"
 }
 
+ldog() {
+    dog $1 | less -R
+}
+
 # Readline Bindings
 bind '"\C-xa":alias-expand-line'
 

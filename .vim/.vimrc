@@ -83,7 +83,7 @@ Bundle 'AndrewRadev/splitjoin.vim'
 " Python
 Bundle 'alfredodeza/pytest.vim'
 "Bundle 'klen/python-mode'
-Bundle 'davidhalter/jedi-vim'
+"Bundle 'davidhalter/jedi-vim'
 
 " C++
 Bundle 'Rip-Rip/clang_complete'

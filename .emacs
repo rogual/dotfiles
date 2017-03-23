@@ -1,3 +1,4 @@
+(setq debug-on-error t)
 ;; Don't shit files everywhere
 (progn
   (setq make-backup-files nil)
@@ -43,11 +44,10 @@
 
   (kill-all-abbrevs)
 
-  (define-global-abbrev "ns" "namespace")
+  (define-global-abbrev "clog" "console.log")
   (define-global-abbrev "rq" "require")
   (define-global-abbrev "im" "import")
   (define-global-abbrev "pa" "package")
-  (define-global-abbrev "cl" "class")
   (define-global-abbrev "fn" "function")
   (define-global-abbrev "ifa" "interface")
   (define-global-abbrev "impl" "implementation")
@@ -73,9 +73,9 @@
 
 ;; Flycheck
 (require-package flycheck
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc jshint))
-                                        ;(global-flycheck-mode))
-  )
+  (setq-default flycheck-disabled-checkers
+                '(emacs-lisp-checkdoc jshint python-pycompile))
+  (global-flycheck-mode))
 
 ;; Dired
 (add-hook 'dired-mode-hook
@@ -89,15 +89,15 @@
 (setq-default indent-tabs-mode nil)
 (setq column-number-mode 1)
 
-(require-package dtrt-indent
-  (add-hook 'prog-mode-hook
-            (lambda () (dtrt-indent-mode t))))
-
 ;; Helm
 (require-package helm
   (require 'helm)
   (require 'helm-config)
-                                        ;(setq helm-ff-newfile-prompt-p nil)
+
+  (use-package evil
+    :config
+    (define-key evil-normal-state-map (kbd "§k") 'helm-show-kill-ring))
+
   (global-set-key (kbd "C-c o p") 'helm-buffers-list)
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (global-set-key (kbd "C-c h") 'helm-command-prefix)
@@ -131,8 +131,7 @@
 (require-package page-break-lines
   (global-page-break-lines-mode))
 
-(require-package jbeans-theme
-  (load-theme 'jbeans t))
+(require-package jbeans-theme)
 
 ;; Show Paren
 (setq show-paren-delay 0)
@@ -172,13 +171,15 @@
 
 ;; Lisp
 (setq inferior-lisp-program (if (eq system-type 'darwin) "ccl64" "sbcl"))
+
 (require-package slime
+  (setq inferior-lisp-program "ccl64")
   (setq slime-contribs '(slime-listener-hooks))
   (setq common-lisp-hyperspec-root
         (if (eq system-type 'darwin)
             "/usr/local/share/doc/hyperspec/HyperSpec/"
           "/usr/share/doc/hyperspec/"))
-  (setq slime-words-of-encouragement '())
+  (setq slime-words-of-encouragement '(""))
   (setq common-lisp-hyperspec-symbol-table
         (concat common-lisp-hyperspec-root "Data/Map_Sym.txt"))
   (setq common-lisp-hyperspec-issuex-table
@@ -231,6 +232,7 @@
 (require-package elpy
   (global-set-key (kbd "C-c .") 'elpy-goto-definition))
 
+(add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
 
 ;; Markdown
 (use-package markdown-mode
@@ -261,6 +263,8 @@
   (evil-mode 1)
   (global-set-key (kbd "s-[") 'evil-prev-buffer)
   (global-set-key (kbd "s-]") 'evil-next-buffer)
+
+  (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
 
   (setq-default evil-symbol-word-search 'symbol)
 
@@ -302,6 +306,7 @@
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((sh         . t)
+     (gnuplot    . t)
      (js         . t)
      (C          . t)
      (http       . t)
@@ -329,7 +334,7 @@
 (setq vc-follow-symlinks t)
 (setq compilation-scroll-output 'first-error)
 
-:; Projectile
+;; Projectile
 (require-package helm-projectile
   (use-package evil
     :config
@@ -350,15 +355,13 @@
 
 ;; Magit
 (require-package magit
-  (global-set-key (kbd "C-c g s") 'magit-status))
+  (global-set-key (kbd "C-c g s") 'magit-status)
+  (use-package evil
+    :config
+    (evil-set-initial-state 'magit-status-mode 'emacs)))
 
 ;; Git-gutter
 (require-package git-gutter
-                                        ; Jellybeans theme for git-gutter
-  (set-face-foreground 'git-gutter:added "#99ad6a")
-  (set-face-foreground 'git-gutter:modified "#fad07a")
-  (set-face-foreground 'git-gutter:deleted "#cf6a4c")
-
   (use-package evil
     :config
     (define-key evil-normal-state-map (kbd "]h") 'git-gutter:next-hunk)
@@ -367,6 +370,8 @@
 
 
 (require-package helm-ag
+  (define-key helm-ag-mode-map (kbd "§j") 'helm-ag-mode-jump-other-window)
+  (setq helm-ag-use-agignore t)
   (define-key evil-normal-state-map (kbd "C-x p") 'helm-ag))
 
 (require-package rust-mode)
@@ -496,8 +501,8 @@
 
   ;; Reset colors prior to applying jbeans
   (dolist (face (face-list))
-    (set-face-background face "#000000")
-    (set-face-foreground face "#ffffff"))
+    (set-face-background face nil)
+    (set-face-foreground face nil))
 
   ;; Most settings come from jbeans
   (load-theme 'jbeans t)
@@ -507,9 +512,29 @@
   (set-face-foreground 'font-lock-comment-delimiter-face "#555")
   (set-face-foreground 'page-break-lines "#555")
 
+  ;; GUI
+  (set-mouse-color "#cccccc")
+
   ;; Show-parens
   (set-face-background 'show-paren-match "#9999aa")
   (set-face-foreground 'show-paren-match "#000000")
+
+  ;; Highlight
+  (require 'hi-lock)
+  (set-face-foreground 'hi-yellow "#000000")
+  (set-face-background 'hi-yellow "#fad07a")
+
+  (set-face-foreground 'hi-pink "#000000")
+  (set-face-background 'hi-pink "#ff73fd")
+  (set-face-foreground 'hi-red-b "#ff73fd")
+
+  (set-face-foreground 'hi-blue "#000000")
+  (set-face-background 'hi-blue "#8197bf")
+  (set-face-foreground 'hi-blue-b "#8197bf")
+
+  (set-face-foreground 'hi-green "#000000")
+  (set-face-background 'hi-green "#99ad6a")
+  (set-face-foreground 'hi-green-b "#99ad6a")
 
   ;; Git-gutter
   (progn
@@ -525,6 +550,9 @@
   ;; Whitespace
   (set-face-foreground 'whitespace-line "#cf6a4c")
   (set-face-background 'whitespace-trailing "#cf6a4c"))
+
+
+(dark)
 
 
 
@@ -547,8 +575,14 @@
     (when filename
       (kill-new filename)
       (message "Copied buffer file name '%s' to the clipboard." filename))))
-(put 'narrow-to-region 'disabled nil)
-(put 'narrow-to-page 'disabled nil)
+
+
+
+;;; DISABLED COMMANDS
+
+(progn
+  (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-page 'disabled nil))
 
 
 
