@@ -106,6 +106,13 @@
 ;; Whitespace
 (add-hook 'before-save-hook 'whitespace-cleanup)
 
+
+
+;;; WINDOWS
+
+(winner-mode 1)
+
+
 
 ;;; DOCS
 
@@ -455,19 +462,23 @@
   (interactive)
   (global-font-lock-mode)
 
+  (setq black "#000000")
+  (setq white "#eeeeee")
+
   (set-face-attribute
    'default nil
    :height 120
    :family "Monaco")
 
+  (set-face-background 'default white)
+  (set-face-foreground 'default black)
+
   (dolist (face (face-list))
     (set-face-bold face nil)
     (set-face-italic face nil)
     (set-face-underline face nil)
-    (set-face-background face "#e8e8e8")
-    (set-face-foreground face "#000000"))
-
-  (fringe-mode 16)
+    (set-face-background face nil)
+    (set-face-foreground face nil))
 
   ;; Decorators are not type names
   (font-lock-add-keywords
@@ -479,10 +490,10 @@
   (set-face-bold 'show-paren-match t)
 
   (dolist (face '(region mode-line isearch lazy-highlight helm-selection))
-    (set-face-background face "#000000")
-    (set-face-foreground face "#ffffff"))
+    (set-face-background face black)
+    (set-face-foreground face white))
 
-  (set-cursor-color "#000000")
+  (set-cursor-color black)
 
   (setq git-gutter:modified-sign " =")
   (setq git-gutter:added-sign    " +")
@@ -491,9 +502,9 @@
   (set-face-bold 'font-lock-type-face t)
   (set-face-bold 'font-lock-function-name-face t)
 
-  (set-face-foreground 'git-gutter:added "#000000")
-  (set-face-foreground 'git-gutter:modified "#000000")
-  (set-face-foreground 'git-gutter:deleted "#000000"))
+  (set-face-foreground 'git-gutter:added black)
+  (set-face-foreground 'git-gutter:modified black)
+  (set-face-foreground 'git-gutter:deleted black))
 
 (defun dark ()
   (interactive)
