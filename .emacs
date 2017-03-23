@@ -43,12 +43,13 @@
             (lambda () (abbrev-mode)))
 
   (kill-all-abbrevs)
+  (kill-all-abbrevs)
 
   (define-global-abbrev "clog" "console.log")
   (define-global-abbrev "rq" "require")
   (define-global-abbrev "im" "import")
-  (define-global-abbrev "pa" "package")
-  (define-global-abbrev "fn" "function")
+  (define-global-abbrev "pa" "function")
+  (define-global-abbrev "fnc" "package")
   (define-global-abbrev "ifa" "interface")
   (define-global-abbrev "impl" "implementation")
   (define-global-abbrev "cont" "continue")
