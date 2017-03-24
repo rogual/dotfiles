@@ -152,7 +152,7 @@
 ;; Fonts
 (set-face-attribute
  'default nil
- :height 100
+ :height 120
  :family (if (eq system-type 'darwin) "Menlo" "Iosevka"))
 
 (setq face-font-rescale-alist '(("Kailasa" . 1.5)))
@@ -490,7 +490,8 @@
   ;; Show-parens
   (set-face-bold 'show-paren-match t)
 
-  (dolist (face '(region mode-line isearch lazy-highlight helm-selection))
+  (dolist (face '(region mode-line isearch lazy-highlight helm-selection
+                         trailing-whitespace))
     (set-face-background face black)
     (set-face-foreground face white))
 
@@ -518,6 +519,9 @@
 
   ;; Most settings come from jbeans
   (load-theme 'jbeans t)
+
+  (dolist (face (face-list))
+    (set-face-italic face nil))
 
   ;; Now for overrides.
   ;; Dim comment delimiters & pagee break lines
