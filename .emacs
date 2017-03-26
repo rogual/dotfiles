@@ -237,8 +237,9 @@
 (require-package pytest
   (setq pytest-cmd-flags "-s"))
 
-(require-package elpy
-  (global-set-key (kbd "C-c .") 'elpy-goto-definition))
+(when (not (eq system-type 'darwin))
+  (require-package elpy
+    (global-set-key (kbd "C-c .") 'elpy-goto-definition)))
 
 (add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
 
