@@ -113,6 +113,25 @@
 
 (winner-mode 1)
 
+(defvar *layouts* '(nil nil nil nil))
+(defvar *layout* 0)
+
+(defun switch-to-layout (i)
+  (setf (nth *layout* *layouts*) (current-window-configuration))
+  (setf *layout* i)
+  (if (nth i *layouts*)
+      (progn
+        (set-window-configuration (nth i *layouts*))
+        (message "Switched to layout %s" (1+ i)))
+    (progn
+      message "Switched to new layout %s" (1+ i))))
+
+(progn
+  (global-set-key (kbd "<f1>") (lambda () (interactive) (switch-to-layout 0)))
+  (global-set-key (kbd "<f2>") (lambda () (interactive) (switch-to-layout 1)))
+  (global-set-key (kbd "<f3>") (lambda () (interactive) (switch-to-layout 2)))
+  (global-set-key (kbd "<f4>") (lambda () (interactive) (switch-to-layout 3))))
+
 
 
 ;;; DOCS
