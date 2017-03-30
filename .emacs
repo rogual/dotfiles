@@ -43,13 +43,12 @@
             (lambda () (abbrev-mode)))
 
   (kill-all-abbrevs)
-  (kill-all-abbrevs)
 
   (define-global-abbrev "clog" "console.log")
   (define-global-abbrev "rq" "require")
   (define-global-abbrev "im" "import")
-  (define-global-abbrev "pa" "function")
-  (define-global-abbrev "fnc" "package")
+  (define-global-abbrev "fnc" "function")
+  (define-global-abbrev "pa" "package")
   (define-global-abbrev "ifa" "interface")
   (define-global-abbrev "impl" "implementation")
   (define-global-abbrev "cont" "continue")
@@ -197,20 +196,20 @@
 (require-package yaml-mode)
 
 ;; Lisp
-(setq inferior-lisp-program (if (eq system-type 'darwin) "ccl64" "sbcl"))
-
-(require-package slime
-  (setq inferior-lisp-program "ccl64")
-  (setq slime-contribs '(slime-listener-hooks))
-  (setq common-lisp-hyperspec-root
-        (if (eq system-type 'darwin)
-            "/usr/local/share/doc/hyperspec/HyperSpec/"
-          "/usr/share/doc/hyperspec/"))
-  (setq slime-words-of-encouragement '(""))
-  (setq common-lisp-hyperspec-symbol-table
-        (concat common-lisp-hyperspec-root "Data/Map_Sym.txt"))
-  (setq common-lisp-hyperspec-issuex-table
-        (concat common-lisp-hyperspec-root "Data/Map_IssX.txt")))
+(let ((slime-helper (expand-file-name "~/quicklisp/slime-helper.el")))
+  (when (file-exists-p slime-helper)
+    (load slime-helper)
+    (setq inferior-lisp-program (if (eq system-type 'darwin) "ccl64" "sbcl"))
+    (setq slime-contribs '(slime-listener-hooks))
+    (setq common-lisp-hyperspec-root
+          (if (eq system-type 'darwin)
+              "/usr/local/share/doc/hyperspec/HyperSpec/"
+            "/usr/share/doc/hyperspec/"))
+    (setq slime-words-of-encouragement '(""))
+    (setq common-lisp-hyperspec-symbol-table
+          (concat common-lisp-hyperspec-root "Data/Map_Sym.txt"))
+    (setq common-lisp-hyperspec-issuex-table
+          (concat common-lisp-hyperspec-root "Data/Map_IssX.txt"))))
 
 ;; C++
 (defun my-c-lineup-inclass (langelem)
